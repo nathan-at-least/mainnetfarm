@@ -16,14 +16,24 @@ def initialize(basedir, number):
 def init_node(nodedir, nodenum, nodename):
     ensure_directory_exists(nodedir)
 
-    with file(os.path.join(nodedir, 'zcash.conf'), 'w') as f:
+    confpath = os.path.join(nodedir, 'zcash.conf')
+    if os.path.isfile(confpath):
+        return
+
+    print 'Writing: {!r}'.format(confpath)
+
+    with file(confpath, 'w') as f:
         def w(tmpl, *a):
             f.write(tmpl.format(*a) + '\n')
 
         w('onlynet=ipv4')
-        w('bind=127.0.0.1:{}', BASEPORT + 2*nodenum)
         w('connect=127.0.0.1:{}', BASEPORT)
+        w('bind=127.0.0.1:{}', BASEPORT + 2*nodenum)
         w('rpcbind=127.0.0.1:{}', BASEPORT + 2*nodenum + 1)
         w('rpcuser={}', nodename)
-        w('rpcpassword={}', os.urandom(32).encode('base64'))
+        w('rpcpassword={}',
+          os.urandom(32)
+          .encode('base64')
+          .rstrip()
+          .rstrip('='))
         w('gen={}', 1 if nodenum == 0 else 0)

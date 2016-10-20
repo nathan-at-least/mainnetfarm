@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 from mainnetfarm.init import initialize
+from mainnetfarm.run import run
 
 
 def main(args=sys.argv[1:]):
@@ -32,12 +33,6 @@ def parse_args(args):
 
 def cmd_init(subp):
     '''initialize.'''
-    #subp.add_argument('--zcash-cli',
-    #                  dest='ZCASH_CLI',
-    #                  type=str,
-    #                  default='./src/zcash-cli',
-    #                  help='Path to zcash-cli.')
-
     subp.add_argument('--number',
                       dest='NUMBER',
                       type=int,
@@ -46,5 +41,19 @@ def cmd_init(subp):
 
     def cmdfunc(opts):
         initialize(opts.BASEDIR, opts.NUMBER)
+
+    return cmdfunc
+
+
+def cmd_run(subp):
+    '''run.'''
+    subp.add_argument('--zcash-cli',
+                      dest='ZCASHCLI',
+                      type=str,
+                      default='./src/zcash-cli',
+                      help='Path to zcash-cli.')
+
+    def cmdfunc(opts):
+        run(opts.BASEDIR, opts.ZCASHCLI)
 
     return cmdfunc
