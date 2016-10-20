@@ -32,11 +32,11 @@ def parse_args(args):
 
 def cmd_init(subp):
     '''initialize.'''
-    subp.add_argument('--zcash-cli',
-                      dest='ZCASH_CLI',
-                      type=str,
-                      default='./src/zcash-cli',
-                      help='Path to zcash-cli.')
+    #subp.add_argument('--zcash-cli',
+    #                  dest='ZCASH_CLI',
+    #                  type=str,
+    #                  default='./src/zcash-cli',
+    #                  help='Path to zcash-cli.')
 
     subp.add_argument('--number',
                       dest='NUMBER',
@@ -45,6 +45,6 @@ def cmd_init(subp):
                       help='Number of nodes to create.')
 
     def cmdfunc(opts):
-        initialize(opts.BASEDIR, opts.ZCASH_CLI, opts.NUMBER)
+        initialize(opts.BASEDIR, opts.NUMBER)
 
     return cmdfunc
