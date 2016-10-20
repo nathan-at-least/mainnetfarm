@@ -22,8 +22,9 @@ def run(basedir, zcashd):
         pw.spawn(n, zcashd, '-datadir={}'.format(path))
 
         debuglogs.append(os.path.join(path, 'debug.log'))
+        debuglogs.append(os.path.join(path, 'testnet3', 'debug.log'))
 
-    #pw.spawn('tail', 'tail', '-F', *debuglogs)
+    pw.spawn('tail', 'tail', '-F', *debuglogs)
     pw.wait_for_all()
 
 

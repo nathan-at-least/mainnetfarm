@@ -6,15 +6,15 @@ from mainnetfarm.fs import ensure_directory_exists
 BASEPORT = random.randrange(1024, 2**16)
 
 
-def initialize(basedir, number):
+def initialize(basedir, number, testnet):
     ensure_directory_exists(basedir)
     for nodenum in range(number):
         nodename = 'node{:02d}'.format(nodenum)
         nodedir = os.path.join(basedir, nodename)
-        init_node(nodedir, number, nodenum, nodename)
+        init_node(nodedir, number, nodenum, nodename, testnet)
 
 
-def init_node(nodedir, nodecount, nodenum, nodename):
+def init_node(nodedir, nodecount, nodenum, nodename, testnet):
     ensure_directory_exists(nodedir)
 
     confpath = os.path.join(nodedir, 'zcash.conf')
@@ -48,6 +48,7 @@ def init_node(nodedir, nodecount, nodenum, nodename):
           .rstrip()
           .rstrip('='))
         w('gen={}', 1 if nodenum == 0 else 0)
-        w('testnet=1')
         w('debug=pow')
-        w('debug=net')
+
+        if testnet:
+            w('testnet=1')

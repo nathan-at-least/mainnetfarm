@@ -39,8 +39,14 @@ def cmd_init(subp):
                       default=3,
                       help='Number of nodes to create.')
 
+    subp.add_argument('--testnet',
+                      dest='TESTNET',
+                      action='store_true',
+                      default=False,
+                      help='testnet mode.')
+
     def cmdfunc(opts):
-        initialize(opts.BASEDIR, opts.NUMBER)
+        initialize(opts.BASEDIR, opts.NUMBER, opts.TESTNET)
 
     return cmdfunc
 
