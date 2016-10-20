@@ -1,8 +1,9 @@
 import os
+import random
 from mainnetfarm.fs import ensure_directory_exists
 
 
-BASEPORT = 2953
+BASEPORT = random.randrange(1024, 2**16)
 
 
 def initialize(basedir, number):
@@ -10,26 +11,36 @@ def initialize(basedir, number):
     for nodenum in range(number):
         nodename = 'node{:02d}'.format(nodenum)
         nodedir = os.path.join(basedir, nodename)
-        init_node(nodedir, nodenum, nodename)
+        init_node(nodedir, number, nodenum, nodename)
 
 
-def init_node(nodedir, nodenum, nodename):
+def init_node(nodedir, nodecount, nodenum, nodename):
     ensure_directory_exists(nodedir)
 
     confpath = os.path.join(nodedir, 'zcash.conf')
-    if os.path.isfile(confpath):
-        return
 
-    print 'Writing: {!r}'.format(confpath)
+    print 'Overwriting: {!r}'.format(confpath)
+
+    baseports = [BASEPORT + 2*i for i in range(nodecount)]
 
     with file(confpath, 'w') as f:
         def w(tmpl, *a):
             f.write(tmpl.format(*a) + '\n')
 
         w('onlynet=ipv4')
-        w('connect=127.0.0.1:{}', BASEPORT)
-        w('bind=127.0.0.1:{}', BASEPORT + 2*nodenum)
-        w('rpcbind=127.0.0.1:{}', BASEPORT + 2*nodenum + 1)
+
+        myport = BASEPORT + 2*nodenum
+        if nodenum == 0:
+            for otherport in baseports:
+                if otherport != myport:
+                    w('connect=127.0.0.1:{}', otherport)
+        else:
+            w('dnsseed=0')
+
+        w('bind=127.0.0.1')
+        w('port={}', myport)
+        w('rpcbind=127.0.0.1')
+        w('rpcport={}', BASEPORT + 2*nodenum + 1)
         w('rpcuser={}', nodename)
         w('rpcpassword={}',
           os.urandom(32)
@@ -37,3 +48,6 @@ def init_node(nodedir, nodenum, nodename):
           .rstrip()
           .rstrip('='))
         w('gen={}', 1 if nodenum == 0 else 0)
+        w('testnet=1')
+        w('debug=pow')
+        w('debug=net')

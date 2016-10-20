@@ -18,7 +18,7 @@ def parse_args(args):
                    dest='BASEDIR',
                    type=str,
                    default=os.path.expanduser('~/.mainnetfarm'),
-                   help='Path to zcash-cli.')
+                   help='Path to base directory.')
 
     subs = p.add_subparsers(title='subcommands')
     for n, v in globals().iteritems():
@@ -47,13 +47,13 @@ def cmd_init(subp):
 
 def cmd_run(subp):
     '''run.'''
-    subp.add_argument('--zcash-cli',
-                      dest='ZCASHCLI',
+    subp.add_argument('--zcashd',
+                      dest='ZCASHD',
                       type=str,
-                      default='./src/zcash-cli',
-                      help='Path to zcash-cli.')
+                      default='./src/zcashd',
+                      help='Path to zcashd.')
 
     def cmdfunc(opts):
-        run(opts.BASEDIR, opts.ZCASHCLI)
+        run(opts.BASEDIR, opts.ZCASHD)
 
     return cmdfunc

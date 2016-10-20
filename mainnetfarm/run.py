@@ -6,22 +6,41 @@ import subprocess
 NAME_RGX = re.compile(r'node(\d{2})')
 
 
-def run(basedir, zcashcli):
+def run(basedir, zcashd):
 
-    procs = {}
+    pw = ProcWaiter()
 
-    for n in basedir:
+    debuglogs = []
+
+    for n in os.listdir(basedir):
         path = os.path.join(basedir, n)
         m = NAME_RGX.match(n)
         if m is None:
             print 'Unexpected junk: {!r}'.format(path)
             continue
 
-        args = [zcashcli, '-datadir={}'.format(path)]
-        print 'Launching {}: {!r}'.format(n, args)
-        proc = subprocess.Popen(args)
-        procs[proc.pid] = n
+        pw.spawn(n, zcashd, '-datadir={}'.format(path))
 
-    while procs:
-        (pid, status) = os.waitpid(0, 0)
-        print '{} exited with status: {!r}'.format(procs.pop(pid), status)
+        debuglogs.append(os.path.join(path, 'debug.log'))
+
+    #pw.spawn('tail', 'tail', '-F', *debuglogs)
+    pw.wait_for_all()
+
+
+class ProcWaiter (object):
+    def __init__(self):
+        self.procs = {}
+
+    def spawn(self, name, *args):
+        print 'Launching {}: {!r}'.format(name, args)
+        proc = subprocess.Popen(args)
+        self.procs[proc.pid] = name
+
+    def wait_for_all(self):
+        while self.procs:
+            (pid, status) = os.waitpid(0, 0)
+            name = self.procs.pop(pid)
+            print '{} exited with status: {!r}'.format(
+                name,
+                status
+            )
