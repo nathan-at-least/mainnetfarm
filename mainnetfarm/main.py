@@ -59,7 +59,12 @@ def cmd_run(subp):
                       default='./src/zcashd',
                       help='Path to zcashd.')
 
+    subp.add_argument('ZCASHD_ARGS',
+                      nargs='*',
+                      type=str,
+                      help='Arguments for all zcashd instances.')
+
     def cmdfunc(opts):
-        run(opts.BASEDIR, opts.ZCASHD)
+        run(opts.BASEDIR, opts.ZCASHD, *opts.ZCASHD_ARGS)
 
     return cmdfunc

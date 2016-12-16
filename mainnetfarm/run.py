@@ -7,7 +7,7 @@ import subprocess
 NAME_RGX = re.compile(r'node(\d{2})')
 
 
-def run(basedir, zcashd):
+def run(basedir, zcashd, *args):
 
     pw = ProcWaiter()
 
@@ -20,7 +20,7 @@ def run(basedir, zcashd):
             print 'Unexpected junk: {!r}'.format(path)
             continue
 
-        pw.spawn(n, zcashd, '-datadir={}'.format(path))
+        pw.spawn(n, zcashd, '-datadir={}'.format(path), *args)
 
         debuglogs.append(os.path.join(path, 'debug.log'))
         debuglogs.append(os.path.join(path, 'testnet3', 'debug.log'))
