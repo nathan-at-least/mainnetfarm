@@ -49,7 +49,7 @@ def init_node(nodedir, nodecount, nodenum, nodename, testnet):
           .rstrip('='))
         w('gen={}', 1 if nodenum == 0 else 0)
         w('debug=pow')
-        w('metricsui=0')
+        w('showmetrics=0')
 
         if testnet:
             w('testnet=1')
