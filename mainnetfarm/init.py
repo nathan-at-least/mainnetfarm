@@ -52,3 +52,9 @@ def init_node(nodedir, nodecount, nodenum, nodename, testnet):
 
         if testnet:
             w('testnet=1')
+
+    # HACK to support testnet mode:
+    # A cleaner approach would be if testnet, write bitcoin.conf elsewhere.
+    bitcoinconflink = os.path.join(nodedir, 'bitcoin.conf')
+    if not os.path.islink(bitcoinconflink):
+        os.symlink('./zcash.conf', bitcoinconflink)
